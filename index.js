@@ -40,21 +40,21 @@ app.get('/', (req, res) => {
 
 
 app.post('/docxtopdf', upload.single('file'), (req, res) => {
-    // Assuming you're using a form to upload the DOCX file.
-    const docxFilePath = req.file.path;
-    const outputPdfFilePath = path.join(__dirname+"/Generator", Date.now()+' output.pdf'); // Change this to your desired output path.
-  
-    docxtopdf(docxFilePath, outputPdfFilePath, (err, result) => {
-        if (err) {
-        console.error(err);
-        res.status(500).send('Error converting DOCX to PDF');
-      } else {
-        res.download(outputPdfFilePath, 'output.pdf', (downloadError) => {
-       
-        });
-      }
-    });
+  // Assuming you're using a form to upload the DOCX file.
+  const docxFilePath = req.file.path;
+  const outputPdfFilePath = path.join(__dirname+"/Generator", Date.now()+'output.pdf'); // Change this to your desired output path.
+
+  docxtopdf(docxFilePath, outputPdfFilePath, (err, result) => {
+      if (err) {
+      console.error(err);
+      res.status(500).send('Error converting DOCX to PDF');
+    } else {
+      res.download(outputPdfFilePath,'output.pdf', (downloadError) => {
+        res.sendFile(`${outputPdfFilePath}`)
+      });
+    }
   });
+});
 
 
 /*########################Merging pdf###########################*/
@@ -66,13 +66,14 @@ app.post('/docxtopdf', upload.single('file'), (req, res) => {
 app.post('/merge', upload.array('pdfs', 2), async (req, res, next)=> {
     console.log(req.files)
     console.log(error)
-    let d = await mergePdfs(path.join(__dirname, req.files[0].path), path.join(__dirname, req.files[1].path))
-    res.redirect(`http://localhost:5000/static/${d}.pdf` )
-     res.redirect("/")
-  })
+    let d = await mergePdfs(path.join(__dirname, req.files[0].path), path.join(__dirname, req.files[1].path));
+    //  res.redirect(`http://localhost:5000/static/${d}.pdf` )
+    res.sendFile(__dirname+`/Merge Generator/${d}.pdf`)
+     
+  });
 
   app.listen(port, () => {
-      console.log(`server is listening on http://localhost:${port}...`);
+      console.log(`server is listening on http://localhost:${port}`);
 
 });
 

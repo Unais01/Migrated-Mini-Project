@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="Stylesheet/uploadpage.css">
+  <link rel="stylesheet" href="Stylesheet/dropanddrag.css">
+
+</head>
+
+<body>
+  <div class="main">
+    <div class="tool__header">
+      <h1 class="tool__header__title">Convert Excel file to PDF</h1>
+      <h2 class="tool__header__subtitle">Combine PDFs in the order you want with the easiest PDF merger available.
+      </h2>
+    </div>
+
+    <!-- working code-->
+    <form class="form-container" method="post" action="/merge" enctype='multipart/form-data'>
+      <div class="upload-files-container">
+        <div class="drag-file-area">
+          <div class="form-group">
+            <label class="label"><span class="browse-files"> <input type="file" name="pdfs" multiple accept=".pdf"
+                  class="default-file-input" /> <span class="browse-files-text">Upload Excel File</span>
+                <span>from device</span></span></label>
+          </div>
+          <input class="btn btn-primary my-4" type="submit" value="Submit">
+        </div>
+      </div>
+    </form>
+  </div>
+</body>
+
+</html>
