@@ -1,0 +1,25 @@
+
+
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Poppins:wght@500&display=swap');
+
+  @import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@300&display=swap');
+
+  @import url('https://fonts.googleapis.com/css2?family=Playpen+Sans:wght@300&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+
+
+
+
+
+.headingfont{
+    font-family: 'Montserrat', sans-serif;
+    font-family: 'Poppins', sans-serif;
+}
+.wemakefont{
+    font-family: 'Playpen Sans', cursive;
+    font-family: 'Playpen Sans', cursive;
+}
+.featuresfont{
+    font-family: 'Poppins', sans-serif;
+}
