@@ -5,7 +5,8 @@ const port = process.env.PORT || 5000;
 const path = require('path');
 const multer = require('multer');
 const docxtopdf = require('docx-pdf');
-const {mergePdfs}  = require('./merge')
+const {mergePdfs}  = require('./merge');
+const { error } = require('console');
 const app = express();
 
 app.use(express.static('uploads'));
@@ -57,24 +58,17 @@ app.post('/docxtopdf', upload.single('file'), (req, res) => {
 
 
 /*########################Merging pdf###########################*/
-// app.get('/', (req, res) => {
-//     res.sendFile(path.join(__dirname + "/Appland/index.html"))
 
-//   })
 
 
 
 
 app.post('/merge', upload.array('pdfs', 2), async (req, res, next)=> {
     console.log(req.files)
+    console.log(error)
     let d = await mergePdfs(path.join(__dirname, req.files[0].path), path.join(__dirname, req.files[1].path))
-    //  res.redirect('/');
-     res.redirect(`http://localhost:5000/static/${d}.pdf` )
-    //  res.sendFile(__dirname +"/public/inner-page.html");
-    
-    // res.send({data: req.files})
-    // req.files is array of `photos` files
-    // req.body will contain the text fields, if there were any
+    res.redirect(`http://localhost:5000/static/${d}.pdf` )
+     res.redirect("/")
   })
 
   app.listen(port, () => {

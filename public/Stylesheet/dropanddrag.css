@@ -7,7 +7,7 @@ body {
 }
 .form-container {
   width: 100vw;
-  height: 100vh;
+  height: 65vh;
   background-color: #7b2cbf;
   display: flex;
     justify-content: center;
@@ -52,7 +52,11 @@ body {
   top: -25px;
 }
 .default-file-input {
-  opacity: 0;
+  opacity: 1;
+  width: 80%;
+}
+.default-file-input:hover{
+  cursor: pointer;
 }
 .cannot-upload-message {
   background-color: #ffc6c4;
@@ -124,7 +128,7 @@ body {
     font-size: 18px;
     border: none;
     border-radius: 20px;
-    margin: 10px;
-    padding: 7.5px 50px;
+    margin: 2px;
+    padding: 7.5px 20px;
     cursor: pointer;
   }
