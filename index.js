@@ -11,6 +11,10 @@ const { error, log } = require('console');
 const ExcelJS = require('exceljs')
 // const PDFDocument = require('pdfkit');
 const { workerData } = require('worker_threads');
+
+const axios = require('axios')
+const FormData = require('form-data')
+
 const app = express();
 /*########################HMulter and serving static files###########################*/
 app.use(express.static('uploads'));
@@ -64,54 +68,54 @@ app.post('/docxtopdf', upload.single('file'), (req, res) => {
 
 
 
+
 /*########################EXCEL to PDF###########################*/
 
-app.post('/xltopdf', upload.single('xls'), (req, res) => {
-  // Assuming you're using a form to upload the DOCX file.
-  const xlFilePath = req.file.path;
-  // const outputPdfFilePath = path.join(__dirname + "/Generator", Date.now() + 'output.pdf'); // Change this to your desired output path.
-  //  console.log(xlFilePath);
+// app.post('/xltopdf', upload.single('xls'), (req, res) => {
+//   // Assuming you're using a form to upload the DOCX file.
+//   const xlFilePath = req.file.path;
+//   // const outputPdfFilePath = path.join(__dirname + "/Generator", Date.now() + 'output.pdf'); // Change this to your desired output path.
+//   //  console.log(xlFilePath);
 
 
 
-  (async () => {
-    const outputPdfFilePath = path.join(__dirname + "/Generator", Date.now() + '_xls.pdf')
-    const workbook = new ExcelJS.Workbook();
-    await workbook.xlsx.readFile(`${xlFilePath}`);
-    const worksheet = workbook.getWorksheet('Sheet1' || "Sheet2" || "Eng Ist To VIIth");
-    // const worksheet = workbook.getWorksheet('Sheet1');
+//   (async () => {
+//     const outputPdfFilePath = path.join(__dirname + "/Generator", Date.now() + '_xls.pdf')
+//     const workbook = new ExcelJS.Workbook();
+//     await workbook.xlsx.readFile(`${xlFilePath}`);
+//     const worksheet = workbook.getWorksheet('Sheet1' || "Sheet2" || "Eng Ist To VIIth");
+//     // const worksheet = workbook.getWorksheet('Sheet1');
 
 
-    const pdfDoc = new PDFDocument();
-    pdfDoc.pipe(fs.createWriteStream(`${outputPdfFilePath}`));
+//     const pdfDoc = new PDFDocument();
+//     pdfDoc.pipe(fs.createWriteStream(`${outputPdfFilePath}`));
 
-    const columnSpacing = 50;
+//     const columnSpacing = 50;
 
-    worksheet.eachRow((row, rowIndex) => {
-      row.eachCell((cell, colIndex) => {
-        const xPos = colIndex * 40 + (colIndex - 1) * columnSpacing;
-        const yPos = rowIndex * 40;
+//     worksheet.eachRow((row, rowIndex) => {
+//       row.eachCell((cell, colIndex) => {
+//         const xPos = colIndex * 40 + (colIndex - 1) * columnSpacing;
+//         const yPos = rowIndex * 40;
 
-        pdfDoc.text(cell.text, xPos, yPos);
-      })
-    })
+//         pdfDoc.text(cell.text, xPos, yPos);
+//       })
+//     })
 
 
 
-    pdfDoc.end();
+//     pdfDoc.end();
 
-    res.sendFile(__dirname + `/public/thankyou.html`)
+//     res.sendFile(__dirname + `/public/thankyou.html`)
 
-  })();
-});
+//   })();
+// });
 
 /*########################image to PDF###########################*/
 app.post('/imgtopdf', upload.single('file'), (req, res) => {
   // Assuming you're using a form to upload the DOCX file.
   const imagelocation = req.file.path;
-  const pdflocation = path.join(__dirname+'/Generator', Date.now() + '_img.pdf');
-  // const outputPdfFilePath = path.join(__dirname + "/Generator", Date.now() + 'output.pdf'); // Change this to your desired output path.
-  //  console.log(xlFilePath);
+  const pdflocation = path.join(__dirname + '/Generator', Date.now() + '_img.pdf');
+
 
 
 
@@ -161,6 +165,144 @@ app.post('/imgtopdf', upload.single('file'), (req, res) => {
     });
 });
 
+
+
+
+/*########################PPT to PDF###########################*/
+app.post('/ppttopdf', upload.single('file'), (req, res) => {
+  const pdflocation = Date.now() +'_ppt.pdf';
+  const pptLocation = req.file.path;
+  const formData = new FormData()
+  formData.append('instructions', JSON.stringify({
+    parts: [
+      {
+        file: "document"
+      }
+    ]
+  }))
+  formData.append('document', fs.createReadStream(`${pptLocation}`));
+  
+  (async () => {
+    try {
+      const response = await axios.post('https://api.pspdfkit.com/build', formData, {
+        headers: formData.getHeaders({
+            'Authorization': 'Bearer pdf_live_D0EuDYCgRQgPccCPCGluA4zfE5Ny0ct0eBAbS7wHOR2'
+        }),
+        responseType: "stream"
+      })
+  
+      // response.data.pipe(fs.createWriteStream("result.pdf"))
+      // response.data.pipe(fs.createWriteStream(Date.now() + '_ppt.pdf'))
+      response.data.pipe(fs.createWriteStream(`{pdflocation}`))
+    } catch (e) {
+      const errorString = await streamToString(e.response.data)
+      console.log(errorString)
+    }
+  })()
+  
+  function streamToString(stream) {
+    const chunks = []
+    return new Promise((resolve, reject) => {
+      stream.on("data", (chunk) => chunks.push(Buffer.from(chunk)))
+      stream.on("error", (err) => reject(err))
+      stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")))
+     
+    })
+  }
+  
+
+});
+
+
+
+// ##############Excel  TO PDF#########################
+app.post('/xltopdf', upload.single('xls'), (req, res) => {
+  const excelLocation = req.file.path;
+  const pdflocation = Date.now() +'_xls.pdf';
+  const formData = new FormData()
+ 
+formData.append('instructions', JSON.stringify({
+  parts: [
+    {
+      file: "document"
+    }
+  ]
+}))
+formData.append('document', fs.createReadStream(`${excelLocation}`))
+
+;(async () => {
+  try {
+    const response = await axios.post('https://api.pspdfkit.com/build', formData, {
+      headers: formData.getHeaders({
+          'Authorization': 'Bearer pdf_live_D0EuDYCgRQgPccCPCGluA4zfE5Ny0ct0eBAbS7wHOR2'
+      }),
+      responseType: "stream"
+    })
+
+    response.data.pipe(fs.createWriteStream(`${pdflocation}`))
+  } catch (e) {
+    const errorString = await streamToString(e.response.data)
+    console.log(errorString)
+  }
+})()
+
+function streamToString(stream) {
+  const chunks = []
+  return new Promise((resolve, reject) => {
+    stream.on("data", (chunk) => chunks.push(Buffer.from(chunk)))
+    stream.on("error", (err) => reject(err))
+    stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")))
+   
+  })
+}
+res.sendFile(__dirname+`/public/thankyou.html`)
+});
+
+
+
+
+//    ##############      HTML TO PDF  ##############
+app.post('/htmltopdf', upload.single('file'), (req, res) => {
+  const htmlLocation = req.file.path;
+  const pdflocation = Date.now() +'_html.pdf';
+  const formData = new FormData()
+ 
+  
+  formData.append('instructions', JSON.stringify({
+    parts: [
+      {
+        html: "index.html"
+      }
+    ]
+  }))
+  formData.append('index.html', fs.createReadStream(`${htmlLocation}`))
+  
+  ;(async () => {
+    try {
+      const response = await axios.post('https://api.pspdfkit.com/build', formData, {
+        headers: formData.getHeaders({
+            'Authorization': 'Bearer pdf_live_D0EuDYCgRQgPccCPCGluA4zfE5Ny0ct0eBAbS7wHOR2'
+        }),
+        responseType: "stream"
+      })
+  
+      response.data.pipe(fs.createWriteStream(`${pdflocation}`))
+    } catch (e) {
+      const errorString = await streamToString(e.response.data)
+      console.log(errorString)
+    }
+  })()
+  
+  function streamToString(stream) {
+    const chunks = []
+    return new Promise((resolve, reject) => {
+      stream.on("data", (chunk) => chunks.push(Buffer.from(chunk)))
+      stream.on("error", (err) => reject(err))
+      stream.on("end", () => resolve(Buffer.concat(chunks).toString("utf8")))
+    })
+  }
+res.sendFile(__dirname+`/public/thankyou.html`)
+});
 
 /*########################local port###########################*/
 app.listen(port, () => {
