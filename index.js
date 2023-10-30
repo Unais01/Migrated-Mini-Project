@@ -193,7 +193,8 @@ app.post('/ppttopdf', upload.single('file'), (req, res) => {
   
       // response.data.pipe(fs.createWriteStream("result.pdf"))
       // response.data.pipe(fs.createWriteStream(Date.now() + '_ppt.pdf'))
-      response.data.pipe(fs.createWriteStream(`{pdflocation}`))
+      await response.data.pipe(fs.createWriteStream(`${pdflocation}`))
+      res.sendFile(`${pdflocation}`)
     } catch (e) {
       const errorString = await streamToString(e.response.data)
       console.log(errorString)
