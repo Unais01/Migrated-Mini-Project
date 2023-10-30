@@ -42,4 +42,4 @@ This is our Third Year Vth semester Mini-Project-I project as Engineering underg
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/Unais01/https://github.com/Unais01/Migrated-Mini-Project.git
+   git clone https://github.com/Unais01/Migrated-Mini-Project.git
